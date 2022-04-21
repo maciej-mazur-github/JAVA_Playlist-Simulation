@@ -68,6 +68,23 @@ public class Player {
         }
     }
 
+    private void addSongToPlaylist() {   // each song is allowed to show up multiple times in the playlist
+        System.out.print("Enter the title: ");
+        String title = scanner.nextLine();
+        System.out.print("Enter duration: ");
+        double duration;
+
+        if(scanner.hasNextDouble()) {
+            duration = scanner.nextDouble();
+            scanner.nextLine();
+        } else {
+            System.out.println("Invalid duration value. Please try again...");
+            return;
+        }
+
+        playList.add(new Song(title, duration));
+    }
+
     private void printActions() {
         System.out.println("Press:");
         System.out.println("1 - to play next song");
