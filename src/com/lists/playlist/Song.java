@@ -1,8 +1,8 @@
 package com.lists.playlist;
 
 class Song {
-    String title;
-    double duration;
+    private String title;
+    private double duration;
 
     public Song(String title, double duration) {
         this.title = title;
@@ -11,5 +11,10 @@ class Song {
 
     public String getTitle() {
         return title;
+    }
+
+    @Override
+    public String toString() {
+        return title + "\t" + duration;
     }
 }

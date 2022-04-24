@@ -31,7 +31,7 @@ public class Player {
                     replayCurrentSong();
                     break;
                 case 4:
-                    addAlbumToPlayer();
+                    addExistingAlbumToPlayer();
                     break;
                 case 5:
                     addAlbumToPlaylist();
@@ -58,15 +58,112 @@ public class Player {
                     showSpecificAlbum();
                     break;
                 case 13:
-                    printActions();
+                    findSongInPlaylist();
+                    break;
+                case 14:
+                    findSongInAlbums();
+                    break;
+                case 15:
+                    quit = true;
                     break;
                 case 0:
-                    quit = true;
+                    printActions();
                     break;
                 default:
                     System.out.println("Invalid choice. Please check out the list of available choice numbers and try again...");
             }
         }
+    }
+
+    private void printActions() {
+        System.out.println("Press:");
+        System.out.println("1 - to play next song");
+        System.out.println("2 - to play previous song");
+        System.out.println("3 - to replay current song");
+        System.out.println("**********************************************");
+        System.out.println("4 - to add a new album to the player");
+        System.out.println("5 - to add a specific album to the playlist");
+        System.out.println("6 - to add a specific song to the playlist");
+        System.out.println("7 - to delete current song from playlist");
+        System.out.println("8 - to delete specific song from the playlist");
+        System.out.println("9 - to delete album from player");
+        System.out.println("10 - to show all songs in the playlist");
+        System.out.println("11 - to show all currently available albums");
+        System.out.println("12 - to show content of a specific album");
+        System.out.println("13 - to find the song in playlist");
+        System.out.println("14 - to find the song in albums");
+        System.out.println("15 - to quit the program");
+        System.out.println("0 - to print available actions");
+
+    }
+
+
+    private void showSongsInPlaylist() {
+        System.out.println("*********************************");
+        System.out.println("PLAYLIST:");
+
+        for(int i = 0; i < playList.size(); i++) {
+            System.out.println("\t" + (i + 1) + ": " + playList.get(i).toString());
+        }
+    }
+
+    private void addExistingAlbumToPlayer(int positionChoice, int albumChoice) {    // sub-method for addExistingAlbumToPlayer()
+        Album chosenAlbum = albums.get(albumChoice);
+
+        for(int i = chosenAlbum.getAlbumSize() - 1; i >= 0; i++) {  // adding songs in backward order so that they show up in the original order later in the playlist
+            playList.add(positionChoice, chosenAlbum.getSong(i));
+        }
+    }
+
+    private void addExistingAlbumToPlayer() {
+        if(albums.isEmpty()) {
+            System.out.println("No albums available in your player store. Please add some new ones");
+            return;
+        }
+
+        System.out.println("Which album would like to fully add to your playlist? Choose one of below listed (enter album number only):");
+
+        for(int i = 0; i < albums.size(); i++) {
+            System.out.println("\t" + (i + 1) + ": \"" + albums.get(i).getAlbumName() + "\" - " + albums.get(i).getArtist());
+        }
+
+        System.out.print("\nEnter your choice: ");
+        int albumChoice;
+        
+        if(scanner.hasNextInt()) {
+            albumChoice = scanner.nextInt();
+            scanner.nextLine();
+        } else {
+            System.out.println("Invalid album number entered. Please try again");
+            return;
+        }
+
+
+        if(albumChoice < 1 || albumChoice > albums.size()) {
+            System.out.println("You have entered a wrong album number. Please try again");
+            return;
+        }
+
+        System.out.println("You chose album number " + albumChoice + " (" + albums.get(albumChoice - 1).getAlbumName());
+        System.out.println("\nEnter the position in the playlist at which adding this album should be started." +
+                            "\nTo add this album at the beginning of the playlist please enter number 1 or less." +
+                            "\nTo add it at the very end of the playlist please enter number " + playList.size() + " or higher." +
+                            "\nTo add it somewhere in between choose the number from the range <2, " + (playList.size() - 1) + ">");
+        System.out.println("\nThis is the current content of your playlist:");
+        showSongsInPlaylist();
+        System.out.print("At which position should this album be added then? ");
+        int positionChoice = scanner.nextInt() - 1;
+
+        if(positionChoice < 0) {
+            positionChoice = 0;
+        } else if(positionChoice >= playList.size()) {
+            positionChoice = playList.size() - 1;
+        }
+
+        addExistingAlbumToPlayer(positionChoice, albumChoice);
+
+        System.out.println("\nThis is your playlist now:");
+        showSongsInPlaylist();
     }
 
     private void addSongToPlaylist() {   // each song is allowed to show up multiple times in the playlist
@@ -81,6 +178,21 @@ public class Player {
         } else {
             System.out.println("Invalid duration value. Please try again...");
             return;
+        }
+
+        System.out.println("\nEnter the position in the playlist at which you would like this song to be added." +
+                "\nTo add this song at the beginning of the playlist please enter number 1 or less." +
+                "\nTo add it at the very end of the playlist please enter number " + playList.size() + " or higher." +
+                "\nTo add it somewhere in between choose the number from the range <2, " + (playList.size() - 1) + ">");
+        System.out.println("\nThis is the current content of your playlist:");
+        showSongsInPlaylist();
+        System.out.print("At which position should this album be added then? ");
+        int positionChoice = scanner.nextInt() - 1;
+
+        if(positionChoice < 0) {
+            positionChoice = 0;
+        } else if(positionChoice >= playList.size()) {
+            positionChoice = playList.size() - 1;
         }
 
         playList.add(new Song(title, duration));
@@ -122,35 +234,75 @@ public class Player {
         return positions;
     }
 
+    private void findSongInPlaylist() {
+        if(playList.isEmpty()) {
+            System.out.println("Your playlist is empty yet. Please add some songs to it first");
+            return;
+        }
+
+        System.out.print("What song would you like to search for in the playlist?: ");
+        String title = scanner.nextLine();
+        ArrayList<Integer> foundPositions = findSongInPlaylist(title);
+
+        if(foundPositions.isEmpty()) {
+            System.out.println("There is no " + title + " in your current playlist");
+            return;
+        }
+
+        System.out.print(title + " is available in your playlist at the positions ");
+
+        for(int i = 0; i < foundPositions.size(); i++) {
+            System.out.print((foundPositions.get(i) + 1));
+
+            if(i < (foundPositions.size() - 1)) {   // to avoid putting colon at the end of the printed values
+                System.out.print(", ");
+            }
+        }
+    }
+
     private ArrayList<PairNumberSong> findSongInAlbums(String title) {
         if(albums.isEmpty()) {
             return null;
         }
 
         ArrayList<PairNumberSong> foundPairs = new ArrayList<>();
+        int foundSongPosition;
 
         for(int i = 0; i < albums.size(); i++) {
-            for(int j = 0; j < albums.get(i).)
+            foundSongPosition = albums.get(i).findSong(title);
+
+            if(foundSongPosition >= 0) {
+                foundPairs.add(new PairNumberSong(i, foundSongPosition));
+            }
         }
+
+        return foundPairs;
     }
 
-    private void printActions() {
-        System.out.println("Press:");
-        System.out.println("1 - to play next song");
-        System.out.println("2 - to play previous song");
-        System.out.println("3 - to replay current song");
-        System.out.println("**********************************************");
-        System.out.println("4 - to add album to player");
-        System.out.println("5 - to add a specific album to the playlist");
-        System.out.println("6 - to add a specific song to the playlist");
-        System.out.println("7 - to delete current song from playlist");
-        System.out.println("8 - to delete specific song from the playlist");
-        System.out.println("9 - to delete album from player");
-        System.out.println("10 - to show all songs in the playlist");
-        System.out.println("11 - to show all currently available albums");
-        System.out.println("12 - to show content of a specific album");
-        System.out.println("13 - to print available actions");
-        System.out.println("0 - to quit the program");
+    private void findSongInAlbums() {
+        if(albums.isEmpty()) {
+            System.out.println("Currently you don't have any albums stored in your player. Please try adding some first");
+            return;
+        }
+
+        System.out.print("What song would you like to search for in your currently stored albums? ");
+        String title = scanner.nextLine();
+        ArrayList<PairNumberSong> foundSongs = findSongInAlbums(title);
+
+        if(foundSongs.isEmpty()) {
+            System.out.println(title + " is non-existent in any of your stored albums");
+            return;
+        }
+
+        System.out.println(title + " has been present in below listed locations");
+        int albumNumber;
+        int songPosition;
+
+        for(int i = 0; i < foundSongs.size(); i++) {
+            albumNumber = foundSongs.get(i).getAlbumNumber();
+            songPosition = foundSongs.get(i).getSongNumberInAlbum();
+            System.out.println("\tAlbum: " + albums.get(albumNumber).getAlbumName() + " / Track #: " + songPosition);
+        }
     }
 
 
