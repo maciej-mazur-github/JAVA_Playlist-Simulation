@@ -105,12 +105,9 @@ public class Player {
         }
 
         System.out.println("This is the current status of your album store:");
-        Album currentAlbum;
 
         for(int i = 0; i < albums.size(); i++) {
-            currentAlbum = albums.get(i);
-
-            for(int j)
+            albums.get(i).showSongs();
         }
     }
 
