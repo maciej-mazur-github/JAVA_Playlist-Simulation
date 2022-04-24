@@ -97,7 +97,31 @@ public class Player {
 
     }
 
+
+    private void showAllAlbums() {
+        if(albums.isEmpty()) {
+            System.out.println("You currently have no albums stored in your player. Please add some first");
+            return;
+        }
+
+        System.out.println("This is the current status of your album store:");
+        Album currentAlbum;
+
+        for(int i = 0; i < albums.size(); i++) {
+            currentAlbum = albums.get(i);
+
+            for(int j)
+        }
+    }
+
+
+
     private void showSpecificAlbum() {
+        if(albums.isEmpty()) {
+            System.out.println("You currently have no albums stored in your player. Please add some first");
+            return;
+        }
+
         System.out.println("You currently have below listed albums stored in your player:");
 
         for(int i = 0; i < albums.size(); i++) {
@@ -122,9 +146,7 @@ public class Player {
         Album chosenAlbum = albums.get(choice);
         System.out.println("This is the content of the chosen album " + chosenAlbum.getAlbumName() + " by " + chosenAlbum.getArtist() + ":");
 
-        for(int i = 0; i < chosenAlbum.getAlbumSize(); i++) {
-            System.out.println("\t" + (i + 1) + ": " + chosenAlbum.getSong(i).toString());
-        }
+        chosenAlbum.showSongs();
     }
 
 
