@@ -97,6 +97,36 @@ public class Player {
 
     }
 
+    private void showSpecificAlbum() {
+        System.out.println("You currently have below listed albums stored in your player:");
+
+        for(int i = 0; i < albums.size(); i++) {
+            System.out.println("\t\"" + (i + 1) + ": " + albums.get(i).getAlbumName() + "\" - " + albums.get(i).getArtist());
+        }
+
+        System.out.print("Content of which one would you like to see? Choose the album number: ");
+
+        if(!scanner.hasNextInt()) {
+            System.out.println("Invalid value entered (number is required). Please try again.");
+            return;
+        }
+
+        int choice = scanner.nextInt() - 1;
+        scanner.nextLine();
+
+        if(choice < 0 || choice >= albums.size()) {
+            System.out.println("There is no album of number " + choice + ". Please try again.");
+            return;
+        }
+
+        Album chosenAlbum = albums.get(choice);
+        System.out.println("This is the content of the chosen album " + chosenAlbum.getAlbumName() + " by " + chosenAlbum.getArtist() + ":");
+
+        for(int i = 0; i < chosenAlbum.getAlbumSize(); i++) {
+            System.out.println("\t" + (i + 1) + ": " + chosenAlbum.getSong(i).toString());
+        }
+    }
+
 
     private void showSongsInPlaylist() {
         System.out.println("*********************************");
