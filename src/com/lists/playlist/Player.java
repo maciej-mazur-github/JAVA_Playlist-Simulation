@@ -2,12 +2,15 @@ package com.lists.playlist;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.Scanner;
 
 public class Player {
     private final LinkedList<Song> playList = new LinkedList<>();
     private final LinkedList<Album> albums = new LinkedList<>();
     private final Scanner scanner = new Scanner(System.in);
+    private ListIterator<Song> currentPlaylistPosition;
+    boolean goingForward = true;
 
     public void runPlayer() {
         System.out.println("The player has been started.\n\n");
@@ -21,6 +24,9 @@ public class Player {
             choice = scanner.nextInt();
 
             switch (choice) {
+                case 0:
+                    chooseTrackToPlay();
+                    break;
                 case 1:
                     playNextSong();
                     break;
@@ -73,6 +79,63 @@ public class Player {
                     System.out.println("Invalid choice. Please check out the list of available choice numbers and try again...");
             }
         }
+    }
+
+    private void playPreviousSong() {
+        if(playList.isEmpty()) {
+            System.out.println("Your playlist is currently empty. Please try adding some songs to it first");
+            return;
+        }
+
+        ListIterator<Song> iterator;
+
+        if(currentPlaylistPosition == null) {
+            iterator = playList.listIterator();
+        } else {
+            iterator = currentPlaylistPosition;
+        }
+
+        if(goingForward)
+            if(iterator.hasPrevious()) {
+                iterator.previous();  // in case change of direction is required first skip the song played recently
+            }
+
+
+        if(iterator.hasPrevious()) {
+            System.out.println("Now playing " + iterator.previous());
+            goingForward = false;
+            currentPlaylistPosition = iterator;  // saving iterator position to let it be used further by playPreviousSong(), playNextSong() or replayCurrentSong()
+        } else {
+            System.out.println("You have already reached the beginning of the playlist. You can start moving forward now or pick a specific track number");
+        }
+    }
+
+    private void playNextSong() {
+        if(playList.isEmpty()) {
+            System.out.println("Your playlist is currently empty. Please try adding some songs to it first");
+            return;
+        }
+
+        ListIterator<Song> iterator;
+
+        if(currentPlaylistPosition == null) {
+            iterator = playList.listIterator();
+        } else {
+            iterator = currentPlaylistPosition;
+        }
+
+        if(!goingForward)
+            iterator.next();  // in case change of direction is required first skip the song played recently
+
+        if(iterator.hasNext()) {
+            System.out.println("Now playing " + iterator.next());
+            goingForward = true;
+            currentPlaylistPosition = iterator;
+        } else {
+            System.out.println("You have already reached the end of the playlist. You can start moving backwards now or pick a specific track number");
+        }
+
+
     }
 
     private void printActions() {
