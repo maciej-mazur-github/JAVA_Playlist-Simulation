@@ -1,6 +1,7 @@
 package com.lists.playlist;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 class Album {
     private String albumName;
@@ -47,4 +48,41 @@ class Album {
 
         return position;
     }
+
+    public static Album createNewAlbum(String artistName, String albumName, int numberOfSongs) {
+        Album album = new Album(albumName, artistName);
+        Scanner scanner = new Scanner(System.in);
+        String title;
+        double duration;
+
+        for(int i = 0; i < numberOfSongs; i ++) {
+            System.out.println("Song " + (i + 1) + "/" + numberOfSongs + ": ");
+            System.out.print("\tEnter song title: ");
+            title = scanner.nextLine();
+            System.out.print("\tEnter song duration");
+            if(!scanner.hasNextDouble()) {
+                System.out.println("Invalid value entered as duration. Breaking out of album creation process. Try again.");
+                return null;
+            }
+            duration = scanner.nextDouble();
+            scanner.nextLine();
+            album.songs.add(new Song(title, duration));
+        }
+
+        return album;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -34,7 +34,7 @@ public class Player {
                     addExistingAlbumToPlayer();
                     break;
                 case 5:
-                    addAlbumToPlaylist();
+                    addNewAlbumToPlayer();
                     break;
                 case 6:
                     addSongToPlaylist();
@@ -95,6 +95,55 @@ public class Player {
         System.out.println("15 - to quit the program");
         System.out.println("0 - to print available actions");
 
+    }
+
+    private void addNewAlbumToPlayer() { // no album names duplicates allowed for a specific artist
+        System.out.print("Enter artist name: ");
+        String artistName = scanner.nextLine();
+
+        System.out.print("Enter album name: ");
+        String albumName = scanner.nextLine();
+
+        if(isAlbumNameDuplicated(artistName, albumName)) {
+            System.out.println(albumName + " of the artist " + artistName + " already exists in your player store. No duplicates allowed");
+            return;
+        }
+
+        System.out.print("How many songs are there needed in this album? ");
+
+        if(!scanner.hasNextInt()) {
+            System.out.println("Invalid number of songs entered. Please try again to add the new album");
+        }
+        int numberOfSongs = scanner.nextInt();
+        scanner.nextLine();
+
+        Album newAlbum = Album.createNewAlbum(artistName, albumName, numberOfSongs);
+
+        if(newAlbum == null) {
+            return;
+        } else {
+            System.out.println("New album \"" + albumName + "\" has been added to your player store successfully. This is how it looks now:");
+            newAlbum.showSongs();
+        }
+
+
+
+    }
+
+    private boolean isAlbumNameDuplicated(String artistName, String albumName) {
+        Album currentAlbum;
+
+        for(int i = 0; i < albums.size(); i++) {
+            currentAlbum = albums.get(i);
+
+            if(currentAlbum.getArtist().equals(artistName)) {
+                if(currentAlbum.getAlbumName().equals(albumName)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
 
@@ -353,6 +402,24 @@ public class Player {
             System.out.println("\tAlbum: " + albums.get(albumNumber).getAlbumName() + " / Track #: " + songPosition);
         }
     }
+
+    /*private Album findAlbumByArtistName(String artistName) {
+        if(albums.isEmpty()) {
+            return null;
+        }
+
+        for(int i = 0; i < albums.size(); i++) {
+            if(albums.get(i).getArtist().equals(artistName)) {
+                return albums.get(i);
+            }
+        }
+
+        return null;
+    }*/
+
+
+
+
 
 
 
