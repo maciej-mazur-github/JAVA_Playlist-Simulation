@@ -81,6 +81,33 @@ public class Player {
         }
     }
 
+    private void replayCurrentSong() {
+        if(playList.isEmpty()) {
+            System.out.println("Your playlist is currently empty. Please try adding some songs to it first");
+            return;
+        }
+
+        ListIterator<Song> iterator;
+
+        if(currentPlaylistPosition == null) {
+            iterator = playList.listIterator();
+        } else {
+            iterator = currentPlaylistPosition;
+        }
+
+        if(goingForward) {
+            if(iterator.hasPrevious()) { // to check whether iterator is not at the beginning of the list
+                System.out.println("Now playing " + iterator.previous());
+                goingForward = false;
+            } else {       // goingForward set to true and having no previous element can only be possible when no song has been played yet
+                System.out.println("No song has been played yet. You can only repeat a song that was played at least once");
+            }
+        } else {
+            System.out.println("Now playing " + iterator.next());  // when goingForward is false that means there is at least one next element, no need to check this then
+            goingForward = true;
+        }
+    }
+
     private void playPreviousSong() {
         if(playList.isEmpty()) {
             System.out.println("Your playlist is currently empty. Please try adding some songs to it first");
@@ -124,7 +151,7 @@ public class Player {
             iterator = currentPlaylistPosition;
         }
 
-        if(!goingForward)
+        if(!goingForward)    // goingForward being false implies having at least one next element
             iterator.next();  // in case change of direction is required first skip the song played recently
 
         if(iterator.hasNext()) {
