@@ -97,6 +97,32 @@ public class Player {
 
     }
 
+    private void deleteAlbumFromPlayer() {
+        if(!showAllAlbumTitles()) {
+            return;
+        }
+
+        System.out.print("\nWhich one of them would like to be deleted from the player store? (choose number only) ");
+
+        if(!scanner.hasNextInt()) {
+            System.out.println("Invalid value entered. Numbers allowed only. Try again");
+            return;
+        }
+
+        int choice = scanner.nextInt() - 1;
+
+        if(choice < 0 || choice >= albums.size()) {
+            System.out.println("There is no album of number " + (choice + 1) + " in your player store. Try again");
+            return;
+        }
+
+        String albumToRemove = albums.get(choice).getAlbumName();
+        String artistName = albums.get(choice).getArtist();
+        albums.remove(choice);
+        System.out.println("ALbum \"" + albumToRemove + " by " + artistName + " successfully removed from your player album store");
+        showAllAlbumTitles();
+    }
+
     private void addNewAlbumToPlayer() { // no album names duplicates allowed for a specific artist
         System.out.print("Enter artist name: ");
         String artistName = scanner.nextLine();
@@ -160,18 +186,25 @@ public class Player {
         }
     }
 
-
-
-    private void showSpecificAlbum() {
+    private boolean showAllAlbumTitles() {
         if(albums.isEmpty()) {
             System.out.println("You currently have no albums stored in your player. Please add some first");
-            return;
+            return false;
         }
 
         System.out.println("You currently have below listed albums stored in your player:");
 
         for(int i = 0; i < albums.size(); i++) {
             System.out.println("\t\"" + (i + 1) + ": " + albums.get(i).getAlbumName() + "\" - " + albums.get(i).getArtist());
+        }
+
+        return true;
+    }
+
+
+    private void showSpecificAlbum() {
+        if(!showAllAlbumTitles()) {
+            return;
         }
 
         System.out.print("Content of which one would you like to see? Choose the album number: ");
