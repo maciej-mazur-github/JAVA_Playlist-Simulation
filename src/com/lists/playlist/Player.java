@@ -13,9 +13,29 @@ public class Player {
     private boolean goingForward = true;
     private Song lastPlayedSong;   // its field isDeleted will be used to verify whether the object at which this reference points was recently deleted or not
 
-    public Player() {
+    public Player() {  // default constructor building initial album store in player
         Album album1 = new Album("The Best Of Guano Apes", "Guano Apes");
-        album1.addSong();
+        album1.addSong(new Song("Break The Line", "4:32"));
+        album1.addSong(new Song("Open Your Eyes", "3:50"));
+        album1.addSong(new Song("Big In Japan", "4:02"));
+        album1.addSong(new Song("Rain", "4:51"));
+        album1.addSong(new Song("No Speech", "3:56"));
+        album1.addSong(new Song("Living In A Lie", "3:10"));
+        album1.addSong(new Song("Lords Of The Boards", "5:10"));
+        album1.addSong(new Song("Quietly", "4:15"));
+        album1.addSong(new Song("Break The Line", "3:45"));
+
+        Album album2 = new Album("Greatest Flix", "Queen");
+        album1.addSong(new Song("Killer Queen", "5:40"));
+        album1.addSong(new Song("Bohemian Rhapsody", "5:25"));
+        album1.addSong(new Song("You're My Best Friend", "3:57"));
+        album1.addSong(new Song("Somebody to Love", "4:23"));
+        album1.addSong(new Song("Tie Your Mother Down", "4:12"));
+        album1.addSong(new Song("We Are the Champions", "4:34"));
+        album1.addSong(new Song("We Will Rock You", "3:35"));
+        album1.addSong(new Song("We Will Rock You (Live)", "4:50"));
+        album1.addSong(new Song("Spread Your Wings", "5:01"));
+        album1.addSong(new Song("Bicycle Race", "4:59"));
     }
 
     public void runPlayer() {
@@ -453,15 +473,7 @@ public class Player {
         System.out.print("Enter the title: ");
         String title = scanner.nextLine();
         System.out.print("Enter duration: ");
-        double duration;
-
-        if(scanner.hasNextDouble()) {
-            duration = scanner.nextDouble();
-            scanner.nextLine();
-        } else {
-            System.out.println("Invalid duration value. Please try again...");
-            return;
-        }
+        String duration = scanner.nextLine();
 
         System.out.println("\nEnter the position in the playlist at which you would like this song to be added." +
                 "\nTo add this song at the beginning of the playlist please enter number 1 or less." +

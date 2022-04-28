@@ -2,10 +2,10 @@ package com.lists.playlist;
 
 class Song {
     private String title;
-    private double duration;
+    private String duration;
     public boolean deleted = false;
 
-    public Song(String title, double duration) {
+    public Song(String title, String duration) {
         this.title = title;
         this.duration = duration;
     }
@@ -16,7 +16,7 @@ class Song {
 
     @Override
     public String toString() {
-        return title + "\t" + duration;
+        return "\"" + title + "\"\t" + duration;
     }
 
 }
