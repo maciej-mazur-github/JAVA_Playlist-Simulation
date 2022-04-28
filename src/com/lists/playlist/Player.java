@@ -13,6 +13,11 @@ public class Player {
     private boolean goingForward = true;
     private Song lastPlayedSong;   // its field isDeleted will be used to verify whether the object at which this reference points was recently deleted or not
 
+    public Player() {
+        Album album1 = new Album("The Best Of Guano Apes", "Guano Apes");
+        album1.addSong();
+    }
+
     public void runPlayer() {
         System.out.println("The player has been started.\n\n");
         printActions();
@@ -50,7 +55,10 @@ public class Player {
                     deleteLastPlayedSong();
                     break;
                 case 8:
-                    deleteSongFromPlaylist();
+                    deleteSongFromPlaylistByName();
+                    break;
+                case 9:
+                    deleteSongFromPlaylistByTrackNumber();
                     break;
                 case 9:
                     deleteAlbumFromPlayer();
@@ -173,13 +181,6 @@ public class Player {
         currentPlaylistPosition = iterator;
     }
 
-    /*private boolean checkIfSongRecentlyDeletedFromPlaylist(Song songToCheck) {
-        if(recentlyDeletedSong == null) {
-            return false;
-        }
-
-        return songToCheck.equals(recentlyDeletedSong);
-    }*/
 
     private void replayLastSong() {
         if(playList.isEmpty()) {
@@ -480,10 +481,10 @@ public class Player {
         playList.add(new Song(title, duration));
     }
 
-    private void deleteSongFromPlaylist() {
+    private void deleteSongFromPlaylistByName() {
         System.out.print("Enter the title you need to be removed: ");
         String title = scanner.nextLine();
-        ArrayList<Integer> foundPositions = findSongInPlaylist(title);
+        ArrayList<Integer> foundPositions = findSongInPlaylist(title);   // one song can be added multiple times to the playlist
 
         if(foundPositions == null) {
             System.out.println("The playlist is empty at the moment so " + title + " could not be deleted. Try adding some songs to the playlist first");
@@ -498,6 +499,20 @@ public class Player {
         for(int i = 0; i < foundPositions.size(); i++) {
             playList.remove(foundPositions.get(i));
         }
+    }
+
+    private void deleteSongFromPlaylistByTrackNumber() {
+        System.out.println("This is your current playlist:");
+        showSongsInPlaylist();
+        System.out.print("Which one of those songs would like to delete? (pick the number only) ");
+        int choice = playlistTrackNumberChoice();
+
+        if(choice < 0) {
+            return;
+        }
+
+        System.out.println(playList.get(choice).getTitle() + " has been successfully deleted from your playlist");
+        playList.remove(choice);
     }
 
     private ArrayList<Integer> findSongInPlaylist(String title) {

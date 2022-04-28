@@ -18,6 +18,10 @@ class Album {
         return albumName;
     }
 
+    public void addSong(Song newSong) {
+        songs.add(newSong);
+    }
+
     public String getArtist() {
         return artist;
     }
