@@ -37,7 +37,7 @@ class Album {
     public void showSongs() {
         System.out.println("\t\"" + albumName + "\" - " + artist + ":");
         for(int i = 0; i < songs.size(); i++) {
-            System.out.println("\t\t" + songs.get(i).toString());
+            System.out.println("\t\t" + (i + 1) + ": \"" + songs.get(i).getTitle() + "\" (" + songs.get(i).getDuration() + ")");
         }
     }
 
@@ -63,9 +63,9 @@ class Album {
             System.out.println("Song " + (i + 1) + "/" + numberOfSongs + ": ");
             System.out.print("\tEnter song title: ");
             title = scanner.nextLine();
-            System.out.print("\tEnter song duration");
+            System.out.print("\tEnter song duration: ");
             duration = scanner.nextLine();
-            album.songs.add(new Song(title, duration));
+            album.songs.add(new Song(title, artistName, albumName, duration));
         }
 
         return album;
