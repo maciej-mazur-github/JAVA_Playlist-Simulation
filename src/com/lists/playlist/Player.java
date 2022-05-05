@@ -91,37 +91,37 @@ public class Player {
                 case 7:
                     addSongFromAlbumsToPlaylist();
                     break;
-                case 7:
+                case 8:
                     deleteLastPlayedSong();
                     break;
-                case 8:
+                case 9:
                     deleteSongFromPlaylistByName();
                     break;
-                case 9:
+                case 10:
                     deleteSongFromPlaylistByTrackNumber();
                     break;
-                case 10:
+                case 11:
                     deleteAlbumFromPlayer();
                     break;
-                case 11:
+                case 12:
                     showSongsInPlaylist();
                     break;
-                case 12:
+                case 13:
                     showAllAlbums();
                     break;
-                case 13:
+                case 14:
                     showAllAlbumTitles();
                     break;
-                case 14:
+                case 15:
                     showSpecificAlbum();
                     break;
-                case 15:
+                case 16:
                     findSongInPlaylist();
                     break;
-                case 16:
+                case 17:
                     findSongInAlbums();
                     break;
-                case 17:
+                case 18:
                     quit = true;
                     System.out.println("You have decided to quit the program. See you next time");
                     break;
@@ -139,24 +139,27 @@ public class Player {
         showAllAlbumTitles();
         System.out.print("\nEnter the album number: ");
         int albumNumber = albumNumberChoice();
+
+        if(albumNumber < 0) {
+            return;
+        }
+
         Album chosenAlbum = albums.get(albumNumber);
         chosenAlbum.showSongs();
         System.out.print("Enter the song number: ");
 
-        if(!scanner.hasNextInt()) {
-            System.out.println("Invalid value entered. Numbers only allowed. Try again");
-            return;
-        }
+        int songNumber = chosenAlbum.songNumberChoice();
 
-        int songNumber = scanner.nextInt() - 1;
-
-        if(songNumber < 0 || songNumber >= chosenAlbum.getAlbumSize()) {
-            System.out.println("There is no song of number " + (songNumber + 1) + ". Try again");
+        if(songNumber < 0) {
             return;
         }
 
         Song chosenSong = chosenAlbum.getSong(songNumber);
         int positionInPlaylist = establishSongPositionInPlaylist();
+
+        if(positionInPlaylist < 0) {
+            return;
+        }
 
         playList.add(positionInPlaylist, chosenSong);
         System.out.println("\"" + chosenSong.getTitle() + "\" successfully added to the playlist at the position " + (positionInPlaylist + 1));
@@ -166,6 +169,7 @@ public class Player {
     private void deleteLastPlayedSong() {
         if(lastPlayedSong == null) {
             System.out.println("No song has been played yet");
+            return;
         }
 
         if(lastPlayedSong.deleted) {
@@ -173,7 +177,7 @@ public class Player {
             return;
         }
 
-        System.out.println(lastPlayedSong.getTitle() + " has been successfully deleted from your playlist");
+        System.out.println("\"" + lastPlayedSong.getTitle() + "\" has been successfully deleted from your playlist");
         lastPlayedSong.deleted = true;
         playList.remove(lastPlayedSong);
     }
@@ -222,6 +226,7 @@ public class Player {
     private int albumNumberChoice() {
         if(!scanner.hasNextInt()) {
             System.out.println("Invalid value entered. Numbers allowed only. Try again");
+            scanner.nextLine();
             return - 1;
         }
 
@@ -235,6 +240,7 @@ public class Player {
 
         return choice;
     }
+
 
     private void chooseTrackToPlay() {
         if(playList.isEmpty()) {
@@ -277,36 +283,35 @@ public class Player {
             }
         }
 
-        if(goingForward) {
-            playPreviousSong();
-        } else {
-            playNextSong();
-        }
+        System.out.println("Now playing " + lastPlayedSong);
 
     }
 
     private void playPreviousSong() {
-        if(playList.isEmpty()) {
+        if (playList.isEmpty()) {
             System.out.println("Your playlist is currently empty. Please try adding some songs to it first");
             return;
         }
 
         ListIterator<Song> iterator = createIterator();
 
-        if(goingForward)
-            if(iterator.hasPrevious()) {
+        if (goingForward) {
+            if (iterator.hasPrevious()) {
                 iterator.previous();  // in case change of direction is required first skip the song played recently
             }
+        }
 
-        if(iterator.hasPrevious()) {
+        if (iterator.hasPrevious()) {
             lastPlayedSong = iterator.previous();
             System.out.println("Now playing " + lastPlayedSong);
             goingForward = false;
             currentPlaylistPosition = iterator;  // saving iterator position to let it be used further by playPreviousSong(), playNextSong() or replayLastSong()
         } else {
             System.out.println("You have already reached the beginning of the playlist. You can start moving forward now or pick a specific track number");
+            goingForward = true;
         }
     }
+
 
     private void playNextSong() {
         if(playList.isEmpty()) {
@@ -316,8 +321,11 @@ public class Player {
 
         ListIterator<Song> iterator = createIterator();
 
-        if(!goingForward)    // goingForward being false implies having at least one next element
-            iterator.next();  // in case change of direction is required first skip the song played recently
+        if(!goingForward) { // goingForward being false implies having at least one next element
+            if(iterator.hasNext()) {  // in case change of direction is required first skip the song played recently
+                iterator.next();
+            }
+        }
 
         if(iterator.hasNext()) {
             lastPlayedSong = iterator.next();
@@ -326,6 +334,7 @@ public class Player {
             currentPlaylistPosition = iterator;
         } else {
             System.out.println("You have already reached the end of the playlist. You can start moving backwards now or pick a specific track number");
+            goingForward = false;
         }
 
 
@@ -340,18 +349,19 @@ public class Player {
         System.out.println("**********************************************");
         System.out.println("4 - to add a specific album from player store to the playlist");
         System.out.println("5 - to create and add a new album to the player");
-        System.out.println("6 - to add a specific song from album store to the playlist");
-        System.out.println("7 - to delete recently played song from playlist");
-        System.out.println("8 - to delete a specific song from the playlist by name");
-        System.out.println("9 - to delete a specific song from the playlist by track number");
-        System.out.println("10 - to delete specific album from the player store");
-        System.out.println("11 - to show all songs in the playlist");
-        System.out.println("12 - to show all albums content in the player store");
-        System.out.println("13 - to show album titles only in the player store");
-        System.out.println("14 - to show the content of a specific album in player store");
-        System.out.println("15 - to find a specific the song in the playlist");
-        System.out.println("16 - to search for a song through all albums");
-        System.out.println("17 - to quit the program");
+        System.out.println("6 - to add a song from outside of album store to the playlist");
+        System.out.println("7 - to add a specific song from album store to the playlist");
+        System.out.println("8 - to delete recently played song from playlist");
+        System.out.println("9 - to delete a specific song from the playlist by name");
+        System.out.println("10 - to delete a specific song from the playlist by track number");
+        System.out.println("11 - to delete specific album from the player store");
+        System.out.println("12 - to show all songs in the playlist");
+        System.out.println("13 - to show all albums content in the player store");
+        System.out.println("14 - to show album titles only in the player store");
+        System.out.println("15 - to show the content of a specific album in player store");
+        System.out.println("16 - to find a specific song in the playlist");
+        System.out.println("17 - to search for a song through all albums");
+        System.out.println("18 - to quit the program");
         System.out.println("20 - to print available actions");
 
     }
@@ -372,7 +382,7 @@ public class Player {
         String albumToRemove = albums.get(choice).getAlbumName();
         String artistName = albums.get(choice).getArtist();
         albums.remove(choice);
-        System.out.println("ALbum \"" + albumToRemove + " by " + artistName + " successfully removed from your player album store");
+        System.out.println("Album \"" + albumToRemove + " by " + artistName + " successfully removed from your player album store");
         showAllAlbumTitles();
     }
 
@@ -392,7 +402,10 @@ public class Player {
 
         if(!scanner.hasNextInt()) {
             System.out.println("Invalid number of songs entered. Please try again to add the new album");
+            scanner.nextLine();
+            return;
         }
+
         int numberOfSongs = scanner.nextInt();
         scanner.nextLine();
 
@@ -474,7 +487,7 @@ public class Player {
 
     private void showSongsInPlaylist() {
         if(playList.isEmpty()) {
-            System.out.println("No songs added to the playlist yet");
+            System.out.println("The playlist is empty now");
             return;
         }
 
@@ -526,13 +539,19 @@ public class Player {
         int positionChoice;
 
         if(!playList.isEmpty()) {
-            System.out.println("\nEnter the position in the playlist at which adding this album should be started." +
-                    "\nEntering the number outside of the of the existing playlist track numbers range will result in either prepending or appending the whole album to the playlist");
+            System.out.println("At what position?");
+            System.out.println("Entering the number outside of the of the existing playlist track numbers range will result in either prepending or appending the whole album to the playlist");
             System.out.println("\nThis is the current content of your playlist:");
             System.out.println();
             showSongsInPlaylist();
             System.out.println();
-            System.out.print("At which position should this album be added then? ");
+            System.out.print("What position do you choose then? ");
+
+            if(!scanner.hasNextInt()) {
+                System.out.println("Invalid value entered. Numbers only allowed. Try again");
+                scanner.nextLine();
+                return -1;
+            }
 
             positionChoice = scanner.nextInt() - 1;
             scanner.nextLine();
@@ -540,7 +559,7 @@ public class Player {
             if(positionChoice < 0) {
                 positionChoice = 0;
             } else if(positionChoice >= playList.size()) {
-                positionChoice = playList.size() - 1;
+                positionChoice = playList.size();
             }
         } else {
             positionChoice = 0;
@@ -561,10 +580,24 @@ public class Player {
 
         int positionChoice = establishSongPositionInPlaylist();
 
-        playList.add(positionChoice, new Song(title, artistName, albumName, duration));
+        if(positionChoice < 0) {
+            System.out.println("Invalid position value. Numbers allowed only. Try again");
+            scanner.nextLine();
+            return;
+        }
+
+        Song newSong = new Song(title, artistName, albumName, duration);
+
+        playList.add(positionChoice, newSong);
+        System.out.println("\"" + newSong.getTitle() + "\" has been successfully added to the playlist at the position " + (positionChoice + 1));
     }
 
     private void deleteSongFromPlaylistByName() {
+        if(playList.isEmpty()) {
+            System.out.println("No songs added to the playlist yet, nothing to delete then");
+            return;
+        }
+
         System.out.print("Enter the title you need to be removed: ");
         String title = scanner.nextLine();
         ArrayList<Integer> foundPositions = findSongInPlaylist(title);   // one song can be added multiple times to the playlist
@@ -575,16 +608,25 @@ public class Player {
         }
 
         if(foundPositions.size() == 0) {
-            System.out.println(title + " not found in your playlist");
+            System.out.println("\"" + title + "\" not found in your playlist");
             return;
         }
+        int counter = 0;
 
         for(int i = 0; i < foundPositions.size(); i++) {
-            playList.remove(foundPositions.get(i));
+            playList.remove((int)foundPositions.get(i));
+            counter++;
         }
+
+        System.out.println("\"" + title + "\" has been successfully removed from the playlist. Number of encounters: " + counter);
     }
 
     private void deleteSongFromPlaylistByTrackNumber() {
+        if(playList.isEmpty()) {
+            System.out.println("No songs added to the playlist yet, nothing to delete then");
+            return;
+        }
+
         System.out.println("This is your current playlist:");
         showSongsInPlaylist();
         System.out.print("Which one of those songs would like to delete? (pick the number only) ");
@@ -594,7 +636,7 @@ public class Player {
             return;
         }
 
-        System.out.println(playList.get(choice).getTitle() + " has been successfully deleted from your playlist");
+        System.out.println("\""+ playList.get(choice).getTitle() + "\" has been successfully deleted from your playlist");
         playList.remove(choice);
     }
 
@@ -684,8 +726,12 @@ public class Player {
             System.out.println("\tAlbum: " + albums.get(albumNumber).getAlbumName() + " / Track #: " + songPosition);
 
             if(askAboutAddingToPlaylist()) {
-                System.out.print("\t\tAt what position? ");
-                int positionInPlaylist = playlistTrackNumberChoice();
+                int positionInPlaylist = establishSongPositionInPlaylist();
+
+                if(positionInPlaylist < 0) {
+                    return;
+                }
+
                 Song songAddedToPlaylist = albums.get(albumNumber).getSong(songPosition);
                 playList.add(positionInPlaylist, songAddedToPlaylist);
                 System.out.println("\t\t\"" + songAddedToPlaylist.getTitle() + "\" successfully added to the playlist at the position " + (positionInPlaylist + 1));

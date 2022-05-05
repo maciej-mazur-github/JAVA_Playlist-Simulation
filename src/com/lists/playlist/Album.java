@@ -7,6 +7,7 @@ class Album {
     private String albumName;
     private String artist;
     private ArrayList<Song> songs;
+    private static Scanner scanner = new Scanner(System.in);
 
     public Album(String albumName, String artist) {
         this.albumName = albumName;
@@ -55,7 +56,6 @@ class Album {
 
     public static Album createNewAlbum(String artistName, String albumName, int numberOfSongs) {
         Album album = new Album(albumName, artistName);
-        Scanner scanner = new Scanner(System.in);
         String title;
         String duration;
 
@@ -69,6 +69,24 @@ class Album {
         }
 
         return album;
+    }
+
+    public int songNumberChoice() {
+        if(!scanner.hasNextInt()) {
+            System.out.println("Invalid value entered. Numbers allowed only. Try again");
+            scanner.nextLine();
+            return - 1;
+        }
+
+        int choice = scanner.nextInt() - 1;
+        scanner.nextLine();
+
+        if(choice < 0 || choice >= songs.size()) {
+            System.out.println("There is no song of number " + (choice + 1) + " in album \"" + albumName + "\". Try again");
+            return - 1;
+        }
+
+        return choice;
     }
 }
 
